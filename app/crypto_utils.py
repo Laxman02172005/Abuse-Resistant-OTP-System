@@ -24,3 +24,6 @@ def normalize_identifier(identifier: str) -> str:
     if "@" in identifier:
         return identifier.lower()
     return identifier.replace(" ", "").replace("-", "")
+
+def hash_token(token: str) -> str:
+    return hashlib.sha256(token.encode("utf-8")).hexdigest()
