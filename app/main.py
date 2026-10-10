@@ -23,7 +23,7 @@ class VerifyRequest(BaseModel):
 lock = threading.Lock()
 
 def deliver_otp(identifier: str, code: str):
-    print(f"DELIVER_OTP: Sending {code} to {identifier}")
+    print(f"DELIVER_OTP: Sending {code} to {identifier}", flush=True)
 
 def prune_send_log(identifier: str, current_time: float):
     if identifier in send_log:
