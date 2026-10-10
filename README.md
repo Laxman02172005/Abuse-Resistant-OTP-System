@@ -98,7 +98,7 @@ Both limits are per identifier (not per IP), in memory, guarded by one `threadin
 
 ## Verification rules
 
-Verification is checked in this exact order: no record, used, expired, locked, compare. Expiry 600 s, rejected when `now >= expires_at`. `used` set true on success, so reuse returns 400. Session token: `secrets.token_urlsafe(32)`, only its SHA-256 is stored.
+Verification is checked in this exact order: no record, used, expired, locked, compare. Expiry 600 s, rejected when `now >= expires_at`. `used` set true on success, so reuse returns 400. Session token: `secrets.token_urlsafe(32)`, only its SHA-256 is stored. Each OTP record is stored under its normalized identifier (the dictionary key) with code_hash, created_at, expires_at, used and attempts.
 
 ## Decisions
 
