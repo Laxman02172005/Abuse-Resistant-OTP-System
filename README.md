@@ -22,7 +22,7 @@ Note: The application refuses to start if `OTP_SECRET` is missing. A small built
 
 ## OTP delivery
 
-OTPs are printed to the server console (via `deliver_otp` in `app/main.py`) instead of sent by SMS/email, as the assignment allows. On the deployed version, read them in the hosting platform's logs. The live service runs on a free tier that sleeps when idle. The first request after a pause can take up to a minute, and a restart clears all in-memory OTPs and rate limits. A real provider would replace `deliver_otp` only. To see OTPs on the live service, open the Render Logs tab, turn Live tail on, and search for DELIVER_OTP.
+OTPs are printed to the server console (via `deliver_otp` in `app/main.py`) instead of sent by SMS/email, as the assignment allows. The live service runs on a free tier that sleeps when idle. The first request after a pause can take up to a minute, and a restart clears all in-memory OTPs and rate limits. A real provider would replace `deliver_otp` only. On the live service the OTP is printed to the server logs, which only the account owner can open. To test the full send and verify flow, run the app locally (see Setup and run); the OTP prints in your terminal. The live link shows the send endpoint, the rate limit (429) and the invalid-code responses.
 
 ## Deployment
 
@@ -114,6 +114,15 @@ Session tokens: only SHA-256 hashes are stored, and tokens are 256-bit random va
 ## Tests
 
 14 pytest tests, one per rule, time patched not slept. I also checked them by temporarily breaking the code (lockout at 6, removing `used=True`, `>=` changed to `>`, removing pruning) and each change made a test fail.
+
+## Live test results
+
+Transcript of live results from 10 Oct 2026:
+- send x4: 200, 200, 200, 429
+- wrong code: 400 with attempts_remaining
+- correct code: 200 with session_token
+- same code again: 400
+- 5 wrong codes: 400 x4 then 429; correct code after lockout: 429
 
 ## Known limitations
 
