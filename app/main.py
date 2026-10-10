@@ -1,3 +1,62 @@
+import time
+import threading
+import re
 from fastapi import FastAPI
+from fastapi.responses import JSONResponse
+from pydantic import BaseModel
+from app.crypto_utils import normalize_identifier, generate_otp, hash_otp
+from app.store import otp_store, send_log, OTP_TTL, MAX_SENDS, SEND_WINDOW
 
 app = FastAPI()
+
+class IdentifierRequest(BaseModel):
+    identifier: str
+
+lock = threading.Lock()
+
+def deliver_otp(identifier: str, code: str):
+    print(f"DELIVER_OTP: Sending {code} to {identifier}")
+
+def prune_send_log(identifier: str, current_time: float):
+    if identifier in send_log:
+        send_log[identifier] = [ts for ts in send_log[identifier] if current_time - ts <= SEND_WINDOW]
+
+@app.post("/auth/send")
+def send_otp(request: IdentifierRequest):
+    identifier = normalize_identifier(request.identifier)
+    
+    if not identifier:
+        return JSONResponse(status_code=400, content={"message": "Invalid identifier"})
+        
+    is_email = bool(re.fullmatch(r"[^@\s]+@[^@\s]+\.[^@\s]+", identifier))
+    is_phone = bool(re.fullmatch(r"\+?\d{7,15}", identifier))
+    
+    if not (is_email or is_phone):
+        return JSONResponse(status_code=400, content={"message": "Invalid identifier"})
+
+    with lock:
+        current_time = time.time()
+        prune_send_log(identifier, current_time)
+        
+        current_logs = send_log.get(identifier, [])
+        if len(current_logs) >= MAX_SENDS:
+            return JSONResponse(status_code=429, content={"message": "Too many requests, try again later"})
+            
+        code = generate_otp()
+        code_hash = hash_otp(identifier, code)
+        
+        otp_store[identifier] = {
+            "code_hash": code_hash,
+            "created_at": current_time,
+            "expires_at": current_time + OTP_TTL,
+            "used": False,
+            "attempts": 0
+        }
+        
+        if identifier not in send_log:
+            send_log[identifier] = []
+        send_log[identifier].append(current_time)
+        
+    deliver_otp(identifier, code)
+    
+    return {"message": f"OTP sent to {identifier}"}
