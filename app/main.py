@@ -9,6 +9,10 @@ from app.store import otp_store, send_log, OTP_TTL, MAX_SENDS, SEND_WINDOW, sess
 
 app = FastAPI()
 
+@app.get("/")
+def read_root():
+    return {"message": "OTP API is running. See /docs for the endpoints: POST /auth/send, POST /auth/verify"}
+
 class IdentifierRequest(BaseModel):
     identifier: str
 

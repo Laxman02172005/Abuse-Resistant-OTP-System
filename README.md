@@ -1,6 +1,6 @@
 # Abuse-Resistant OTP System
 
-Live deployment: <DEPLOYMENT_LINK_PLACEHOLDER>
+Live deployment: <DEPLOYMENT_LINK_PLACEHOLDER>. Open <URL>/docs to try the API in the browser.
 
 ## Overview
 
@@ -22,7 +22,7 @@ Note: The application refuses to start if `OTP_SECRET` is missing. A small built
 
 ## OTP delivery
 
-OTPs are printed to the server console (via `deliver_otp` in `app/main.py`) instead of sent by SMS/email, as the assignment allows. On the deployed version, read them in the hosting platform's logs. The free tier may sleep, so the first request can be slow. A real provider would replace `deliver_otp` only.
+OTPs are printed to the server console (via `deliver_otp` in `app/main.py`) instead of sent by SMS/email, as the assignment allows. On the deployed version, read them in the hosting platform's logs. The live service runs on a free tier that sleeps when idle. The first request after a pause can take up to a minute, and a restart clears all in-memory OTPs and rate limits. A real provider would replace `deliver_otp` only.
 
 ## Deployment
 
