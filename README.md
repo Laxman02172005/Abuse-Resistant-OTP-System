@@ -2,6 +2,12 @@
 
 Live deployment: https://sailaxman-nestack-submission.onrender.com. Open https://sailaxman-nestack-submission.onrender.com/docs to try the API in the browser.
 
+## How to test
+
+1. Run `python -m pytest -v`. It runs 14 tests that cover every rule, with no setup and no `.env` needed.
+2. Run the app locally (see Setup and run). The OTP prints in your own terminal, so the full send, verify, reuse and lockout flow works.
+3. The live link serves `/docs` and shows the send endpoint, the rate limit (429), invalid identifiers (400) and wrong-code responses (400, then 429 after 5 wrong codes). OTPs on the live service go to private logs, so a full verify there needs a local run.
+
 ## Overview
 
 OTP login backend with POST /auth/send and POST /auth/verify. Python + FastAPI. In-memory storage. No auth, JWT or rate-limit libraries; security logic uses only the standard library. Runtime dependencies: fastapi and uvicorn. pytest and httpx are for tests.
