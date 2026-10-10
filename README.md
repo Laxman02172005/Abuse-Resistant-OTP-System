@@ -1,6 +1,6 @@
 # Abuse-Resistant OTP System
 
-Live deployment: <DEPLOYMENT_LINK_PLACEHOLDER>. Open <URL>/docs to try the API in the browser.
+Live deployment: https://sailaxman-nestack-submission.onrender.com. Open https://sailaxman-nestack-submission.onrender.com/docs to try the API in the browser.
 
 ## Overview
 
@@ -22,7 +22,7 @@ Note: The application refuses to start if `OTP_SECRET` is missing. A small built
 
 ## OTP delivery
 
-OTPs are printed to the server console (via `deliver_otp` in `app/main.py`) instead of sent by SMS/email, as the assignment allows. On the deployed version, read them in the hosting platform's logs. The live service runs on a free tier that sleeps when idle. The first request after a pause can take up to a minute, and a restart clears all in-memory OTPs and rate limits. A real provider would replace `deliver_otp` only.
+OTPs are printed to the server console (via `deliver_otp` in `app/main.py`) instead of sent by SMS/email, as the assignment allows. On the deployed version, read them in the hosting platform's logs. The live service runs on a free tier that sleeps when idle. The first request after a pause can take up to a minute, and a restart clears all in-memory OTPs and rate limits. A real provider would replace `deliver_otp` only. To see OTPs on the live service, open the Render Logs tab, turn Live tail on, and search for DELIVER_OTP.
 
 ## Deployment
 
@@ -41,10 +41,11 @@ Request body:
 
 Example `curl`:
 ```bash
-curl -X POST https://<DEPLOYMENT_LINK_PLACEHOLDER>/auth/send \
+curl -X POST https://sailaxman-nestack-submission.onrender.com/auth/send \
   -H "Content-Type: application/json" \
   -d '{"identifier": "user@example.com"}'
 ```
+In Windows PowerShell, put the JSON in a file and use -d @file.json, or use the /docs page.
 
 Example responses:
 - 200 OK: `{"message": "OTP sent to user@example.com"}`
@@ -63,10 +64,11 @@ Request body:
 
 Example `curl`:
 ```bash
-curl -X POST https://<DEPLOYMENT_LINK_PLACEHOLDER>/auth/verify \
+curl -X POST https://sailaxman-nestack-submission.onrender.com/auth/verify \
   -H "Content-Type: application/json" \
   -d '{"identifier": "user@example.com", "code": "123456"}'
 ```
+In Windows PowerShell, put the JSON in a file and use -d @file.json, or use the /docs page.
 
 Example responses:
 - 200 OK: `{"message": "Verified", "session_token": "<token>"}`
